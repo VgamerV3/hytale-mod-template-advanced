@@ -10,9 +10,18 @@ def localTemplateJar = file('libs/HytaleServer.jar')
 def envConfiguredJarPath = System.getenv('HYTALE_SERVER_JAR')
 def envConfiguredJar = envConfiguredJarPath ? file(envConfiguredJarPath) : null
 def launcherJar = file("$hytaleHome/install/$patchline/package/game/latest/Server/HytaleServer.jar")
-def workspaceJar = file('../../../HytaleServer.jar')
+def workspaceJarCandidates = []
+def searchDir = projectDir
+6.times {
+  searchDir = searchDir?.parentFile
+  if (searchDir != null) {
+    workspaceJarCandidates << new File(searchDir, 'HytaleServer.jar')
+  }
+}
 
-def hytaleServerJar = [localTemplateJar, envConfiguredJar, launcherJar, workspaceJar].find { it != null && it.exists() }
+def hytaleServerJar = ([localTemplateJar, envConfiguredJar, launcherJar] + workspaceJarCandidates).find {
+  it != null && it.exists()
+}
 
 def effectiveHytaleBuild = hytale_build
 if (hytaleServerJar != null) {
@@ -60,6 +69,7 @@ dependencies {
   }
 
   testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
 }
 
 tasks.withType(JavaCompile).configureEach {

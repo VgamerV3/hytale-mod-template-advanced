@@ -1,6 +1,5 @@
 package net.hytaledepot.templates.mod.advanced;
 
-import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
 import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
@@ -123,12 +122,12 @@ public final class AdvancedModPlugin extends JavaPlugin {
     private AdvancedModStatusCommand() {
       super("hdadvancedmodstatus", "Shows runtime status for AdvancedModPlugin.");
       setAllowsExtraArguments(true);
-      this.setPermissionGroup(GameMode.Adventure);
+      setPermissionGroups("hytale:Adventurer");
     }
 
     @Override
     protected void executeSync(@Nonnull CommandContext ctx) {
-      String sender = String.valueOf(ctx.sender().getDisplayName());
+      String sender = String.valueOf(ctx.sender().getUsername());
       String line =
           "[AdvancedMod] lifecycle="
               + lifecycle
@@ -159,13 +158,13 @@ public final class AdvancedModPlugin extends JavaPlugin {
     private AdvancedModDemoCommand() {
       super("hdadvancedmoddemo", "Runs an action in the advanced mod template.");
       setAllowsExtraArguments(true);
-      this.setPermissionGroup(GameMode.Adventure);
+      setPermissionGroups("hytale:Adventurer");
     }
 
     @Override
     protected void executeSync(@Nonnull CommandContext ctx) {
       ParsedInput input = ParsedInput.parse(ctx.getInputString());
-      String sender = String.valueOf(ctx.sender().getDisplayName());
+      String sender = String.valueOf(ctx.sender().getUsername());
       String line = service.applyAction(sender, input.action, input.arguments, heartbeatTicks.get());
       ctx.sendMessage(Message.raw(line));
     }
@@ -175,7 +174,7 @@ public final class AdvancedModPlugin extends JavaPlugin {
     private AdvancedModFlushCommand() {
       super("hdadvancedmodflush", "Flushes advanced mod snapshot.");
       setAllowsExtraArguments(true);
-      this.setPermissionGroup(GameMode.Adventure);
+      setPermissionGroups("hytale:Adventurer");
     }
 
     @Override
@@ -184,7 +183,7 @@ public final class AdvancedModPlugin extends JavaPlugin {
       ctx.sendMessage(
           Message.raw(
               "[AdvancedMod] Snapshot flushed. "
-                  + service.diagnostics(String.valueOf(ctx.sender().getDisplayName()), heartbeatTicks.get())
+                  + service.diagnostics(String.valueOf(ctx.sender().getUsername()), heartbeatTicks.get())
                   + ", latestAudit="
                   + service.latestAuditEntry()));
     }
